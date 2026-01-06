@@ -86,5 +86,5 @@ p_anim <- ggplot(trial_results_anim, aes(x = diff)) +
 animate(p_anim, fps = 2, width = 350, height = 250)
 
 anim_out <- animate(p_anim, nframes=100, fps=5, width=700, height=500, renderer = gifski_renderer(loop = TRUE))
-anim_save("diff_anim.gif", anim_out)
+anim_save("fev_sim.gif", anim_out)
 
