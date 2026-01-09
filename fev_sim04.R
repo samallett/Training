@@ -18,7 +18,8 @@ cv <- qnorm(1 - alpha/2, mean = 0, sd = sd_diff)
 results <- tibble(
   sim = 1:nsim,
   diff = rnorm(nsim, mean = 0, sd = sd_diff),
-  color = if_else(diff > cv | diff < -cv , "reject", "accept")
+  # color = if_else(diff > cv | diff < -cv , "reject", "accept")
+  color = if_else(diff > cv, "reject", "accept")
 )
 
 # Density curve + shading
@@ -34,12 +35,12 @@ df_plot <- tibble(
 # ----- Animated plot -----
 p_anim <- ggplot() +
   # theoretical density curve
-  geom_line(
-    data = df_plot,
-    aes(x = x, y = density),
-    linewidth = 0.1,
-    color = "black"
-  ) +
+  # geom_line(
+  #   data = df_plot,
+  #   aes(x = x, y = density),
+  #   linewidth = 0.1,
+  #   color = "black"
+  # ) +
   # shaded rejection region
   # geom_area(
   #   data = df_plot %>% filter(reject1),
@@ -58,20 +59,20 @@ p_anim <- ggplot() +
     xmin = 65,
     xmax = 130,
     ymin = 0,
-    ymax = max(df_plot$density) * 1.05,
+    ymax = 2,
     fill = "#dd7e0e",
     alpha = 0.1
   ) +
-  annotate(
-    "rect",
-    xmin = -130,
-    xmax = -65,
-    ymin = 0,
-    ymax = max(df_plot$density) * 1.05,
-    fill = "#dd7e0e",
-    alpha = 0.1
-  ) + 
-  geom_point(data = results, aes(x = diff, y = 0, fill = color, color = color),  size = 8, shape = 21) +  
+  # annotate(
+  #   "rect",
+  #   xmin = -130,
+  #   xmax = -65,
+  #   ymin = 0,
+  #   ymax = 2,
+  #   fill = "#dd7e0e",
+  #   alpha = 0.1
+  # ) + 
+  geom_point(data = results, aes(x = diff, y = 1, fill = color, color = color),  size = 8, shape = 21) +  
   
   scale_color_manual(
     values = c("accept" = "#41ab5d", "reject" = "#e31a1c")
@@ -80,9 +81,9 @@ p_anim <- ggplot() +
     values = c("accept" = "#FCF7E4", "reject" = "#e31a1c")
   ) +
   scale_x_continuous(" ",breaks=seq(-100, 100, by=100), limits = c(-130, 130)) +
-  scale_y_continuous(" ") +
+  scale_y_continuous(" ", limits = c(0, 2)) +  # set x-axis range
   geom_vline(xintercept = cv, linetype = "dashed", color = "#ad640b", linewidth = 0.1) +
-  geom_vline(xintercept = -cv, linetype = "dashed", color = "#ad640b", linewidth = 0.1) +
+  # geom_vline(xintercept = -cv, linetype = "dashed", color = "#ad640b", linewidth = 0.1) +
   geom_hline(yintercept = 0, color = "#595959", size = 0.3) +
   theme_minimal(base_size = 24) +
   theme(
